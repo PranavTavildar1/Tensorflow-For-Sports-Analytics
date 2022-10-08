@@ -116,6 +116,7 @@
      \item Preferred by Research Labs
      \item Easily Debuggable
     \end{itemize}
+    {\includegraphics[width=3cm]{images/altmeme.png}}
      \end{block}
    \end{column}
    
@@ -188,115 +189,36 @@ tf.__version__
 
 \section{Concepts and Basis}
 
-\begin{frame}[fragile]{3 key concepts in tensorflow programming}
+\begin{frame}[fragile]{Components of Tensorflow}
 \begin{itemize}
-	\item Operations: Data operations like "matmul" (matrix multiplication), "add".
-	\item Graph: Build GRAPH which represents the data flow of the computation.
-	\item Session: Run SESSION which executes the operations on the graph.
+	\item Operations: Linear Algebra Data Operations
+	\item Graph: A skeleton structure which holds all the data and operations
+	\item Nodes: Contains Constants and Variables
+	\item Session: The *flow in tensorflow. Not used anymore in Tensorflow V2
 \end{itemize}
-\uncover<2->
-{
-	\begin{picture}(0,0)(0,0)
-		\put(90,-80)
-		{\includegraphics[width=9cm]{images/fig3.jpg}}
-	\end{picture}
-}
 \end{frame}
 
+\begin{frame}[fragile]{An Illustration Using Pipes}
+\begin{center}
+{\includegraphics[width=8cm]{images/graph.jpg}}
+\end{center}
+\end{frame}
 
 \begin{frame}[fragile]{Tensorflow V1 versus V2}
 \begin{itemize}
 	\item V1: Nodes $ \to $  Operations $ \to$ Graph $\to$ Session $\to$ import the data
 	\item V2: import the data $\to$ Nodes  $\to$ Operations (eager execution)
 \end{itemize}
-Pros and Cons:
-\begin{itemize}
-	\item V1 Pros: Integrity, a big picture of view
-	\item V1 Cons: Lack of flexibility
-	\item V2 Pros: Flexibility, you can always see the output step by step
-	\item V2 Cons: Further efforts are frequently needed to pack the code up into a final package or class function
-\end{itemize}
-Therefore, V1 is frequently used in final delivery but V2 is good for debugging.
+\begin{center}
+\begin{figure}
+\includegraphics[width=5cm]{images/damndaniel.png}
+\caption{Me when I see how much easier it is to develop with eager execution}
+\end{figure}
+\end{center}
 \end{frame}
 
-
-\begin{frame}[fragile]{Tensorflow V1 versus V2}
-Good news: V1 are V2 are both be accessible by tensorflow package.
-\begin{itemize}
-	\item Default is V2 (import tensorflow as tf)
-	\item Use "import tensorflow.compat.v1 as tfv1" to call the functions and methods under V1
-\end{itemize}
-\end{frame}
-
-
-\begin{frame}[fragile]{Basic widget: Constant}
-The constant can be either scalar, vector, or matrix. It is just a concept which is opposite with variable. Variable can be changed in the future by using tf.assign() method, while the constant can not.
-\begin{lstlisting}[style = Python]
-s = tf.constant(2)
-m = tf.constant([[1,2],[3,4]])
-m = tf.constant([1,2,3,4],shape=[2,2])
-\end{lstlisting}
-With these two node, we can conduct a GRAPH and SESSION example. Here we use "tensorboard" for GRAPH and tf.Session() function for SESSION.
-\end{frame}
-
-\begin{frame}[fragile]{A simplest graph and session}
-\begin{lstlisting}[style = Python]
-g = tf.Graph()
-with g.as_default():
-    s = tf.constant(2)
-    m = tf.constant([[1,2],[3,4]])
-    mmul = s*m
-g
-\end{lstlisting}
-Here, we have already completed a graph, to "open the faucet", we use tf.Session(), like:
-\begin{lstlisting}[style = Python]
-with tfv1.Session(graph=g) as sess:
-    print(sess.run(mmul))
-\end{lstlisting}
-Finally, we get the result. Remark: The tf.Session() only exist in tensorflow v1, so we call this function under v1 platform.
-\end{frame}
-
-\begin{frame}[fragile]{Basic widget: Variable}
-Variables are used to hold and update parameters. Another important difference with the constant is that it be treated as variable in the calculation of gradient. To create a variable, 
-\begin{lstlisting}[style = Python]
-w = tf.Variable(tf.ones((2,2))) # 2*2 matrix with all elements as 1
-\end{lstlisting}
-\begin{alertblock}{Alert}
-The variable must be initialized immediately after "the data faucet is open" (i.e. tfv1.Session()).
-\end{alertblock}
-\begin{lstlisting}[style = Python]
-with tfv1.Session() as sess:
-    sess.run(tfv1.global_variables_initializer())
-    print(sess.run(w))
-\end{lstlisting}
-\end{frame}
-
-\begin{frame}[fragile]{Basic widget: Variable}
-As we mentioned earlier, variable can be assigned with a new value. 
-\begin{lstlisting}[style = Python]
-with tfv1.Session() as sess:
-    sess.run(tfv1.global_variables_initializer())
-    print(sess.run(w))
-    # Change w to a 2*2 matrix with all elements as 0
-    sess.run(w.assign(tf.zeros((2,2)))) 
-    print(sess.run(w))
-\end{lstlisting}
-\end{frame}
-
-
-\begin{frame}[fragile]{Basic widget: Placeholder}
-We can notice that although variable is more flexible than constant, it still need a initial value. In practice, sometimes the value of a parameter is determined by the actual data. So we need the placeholder to tell the PC, there is a variable, but I don't tell you the value, I will give you the value when I open the data faucet.
-\begin{lstlisting}[style = Python]
-import numpy as np
-node1 = tfv1.placeholder(tf.float32,shape = [1,2])
-node2 = tfv1.placeholder(tf.float32,shape = [1,2])
-w_linear = tf.matmul(node1,w) + node2
-with tfv1.Session() as sess:
-    sess.run(tfv1.global_variables_initializer())
-    print(sess.run(w))
-    print(sess.run(w_linear,feed_dict={node1:np.matrix([1.0,2.0]),
-    	node2:np.matrix([1.0,2.0])}))
-\end{lstlisting}
+\begin{frame}[fragile]{Let's get into the code!}
+Open the tv1vtf2.ipynb file from the code
 \end{frame}
 
 \begin{frame}[fragile]{Basic Operations}
@@ -314,25 +236,45 @@ Given $x$ and $y$,
 \end{frame}
 
 
-
-
-
-
-
 \section{Neural Networks}
 
 \begin{frame}[fragile]{ANN}
 One of the greatest strengths of tensorflow is its ability to mimic learning and make predictions using data. This is done through structures known as Neural Networks. In the scope of this workshop, we're only covering Artificial Neural Networks known as ANNs.
 \end{frame}
 
-\begin{frame}[fragile]{ANNs Continued}
+\begin{frame}[fragile]{The Neuron}
+Approach like a black box with input and output. The following are components of a Neuron
 \begin{itemize}
-	\item Approach like a black box with input and output
-	\item Neurons
-	\item Weights
+	\item Node: Has a Bias
+	\item Weights: this is the connection between nodes
+	\item Activation: A function that determines how the neuron will fire
 \end{itemize}
+\begin{center}
+{\includegraphics[width=8cm]{images/neuron.jpg}}
+\end{center}
 \end{frame}
 
+\begin{frame}[fragile]{Network}
+Many neurons together make up a layer of which there are three types
+\begin{itemize}
+	\item Input
+	\item Output
+	\item Hidden
+\end{itemize}
+During training the weights in the hidden layer will be adjusted in a process known as Back Propagation in order to improve accuracy
+\begin{center}
+{\includegraphics[width=5cm]{images/neuralnetdiagram.png}}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Gradient Descent}
+Gradient Descent is how the Machine Learns! This is a feedback cycle that aims to minimize the loss function by descending down the derivative of the lost function until you reach the minimum
+\begin{example}
+	\begin{equation*}
+	\left( {GD} \right):{\hat \beta ^{\left( {t + 1} \right)}} = {\hat \beta ^{\left( t \right)}} - \gamma \nabla {E_n}\left[ {\ell \left( {y,\hat y\left( {{{\hat \beta }^{\left( t \right)}}} \right)} \right)} \right]
+	\end{equation*}
+	\end{example}
+\end{frame}
 
 \section{Making our Model}
 
@@ -347,7 +289,18 @@ Now it is time to create our Tensorflow Model! We're using play-by-play data fro
 \section{Conclusion}
 
 \begin{frame}{Takeaways}
-
+For Data Engineering
+\begin{itemize}
+	\item Drop values in order to get rid of empty, redundant, or outlying/influential points
+	\item Encode Categorical Data using techniques like one-hot encoding
+	\item Normalize your data before using it.
+\end{itemize}
+For Building and Analyzing Model
+\begin{itemize}
+	\item Use sigmoid activation function for output layers with one node
+	\item Use binary cross-entropy as a loss function
+	\item Watch out for overfitting
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Shameless Promo}
